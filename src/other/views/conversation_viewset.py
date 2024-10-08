@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.filters import SearchFilter
 
-from base.filters.name_concat_searchFilter import NameConcatSearchFilter
+from other.filters.name_concat_searchFilter import NameConcatSearchFilter
 from other.models.conversation_model import ConversationModel
 from other.serializers.conversation_serializer import ConversationSerializer
 
