@@ -8,5 +8,5 @@ router.register(r'projects', ProjectViewSet)
 router.register(r'tasks', TaskViewSet)
 
 urlpatterns = [
-     path('project/', include(router.urls)),
+     path('', include(router.urls)),
 ]
