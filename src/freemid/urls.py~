@@ -41,8 +41,8 @@ urlpatterns = [
     path('',
          include(
              [
-                 # path('', include('user.urls')),
-                 # path('', include('project.urls')),
+                 path('', include('user.urls')),
+                 path('', include('project.urls')),
                  path('', include('offer.urls')),
                  path('', include('other.urls')),
 
