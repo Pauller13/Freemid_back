@@ -16,4 +16,4 @@ class ProjectModel(DateTimeModel):
     payment_steps = models.JSONField(blank=True, null=True)
 
     def __str__(self):
-        return f"Project for {self.offer.title} by {self.freelancer.username}"
+        return f"Project for {self.offer.title} by {self.freelancer.user.username}"
