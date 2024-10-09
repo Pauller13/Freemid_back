@@ -4,7 +4,7 @@ from .views.offer_viewset  import OfferViewSet
 from .views.offerskill_viewset import OfferSkillViewSet
 from .views.proposal_viewset import ProposalViewSet
 from .views.skill_viewset import  SkillViewSet
-from ..other.urls import router
+
 
 router = routers.DefaultRouter()
 router.register(r'offers', OfferViewSet)
