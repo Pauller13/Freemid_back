@@ -1,5 +1,5 @@
-from rest_framework import viewsets
-from offer.models.offerskill_model import OfferSkillModel
+from  rest_framework import  viewsets
+from offer.models.offerskill import OfferSkillModel
 from offer.serializers.offerskill_serializer import OfferSkillSerializer
 
 

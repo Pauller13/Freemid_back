@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from offer.models.skill_model import SkillModel
-from offer.serializers.skill_serializer import SkillSerializer
+from offer.serialiazers.skill_serializer import SkillSerializer
 
 
 class SkillViewSet(viewsets.ModelViewSet):
