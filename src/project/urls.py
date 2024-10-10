@@ -3,7 +3,7 @@ from rest_framework import routers
 from project.views.project_viewset import ProjectViewSet
 from project.views.task_viewset import TaskViewSet
 from project.views.deliverable_viewset import DeliverableViewSet
-
+from project.views.payment_serializer import PaymentViewSet
 
 router = routers.DefaultRouter()
 router.register(r'projects', ProjectViewSet)
