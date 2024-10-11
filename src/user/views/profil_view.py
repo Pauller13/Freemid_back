@@ -1,4 +1,8 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import JSONParser
+from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework import status
 from user.serializers.profil_serializer import ProfilSerializer
@@ -53,6 +57,26 @@ def get_client_profile_by_id(request,id):
     except ClientModel.DoesNotExist:
         return Response({'detail': 'Client non trouvé'}, status=status.HTTP_404_NOT_FOUND)
 
+
+@csrf_exempt  # Désactive la vérification CSRF
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_client_profile(request):
+    try:
+        client = ClientModel.objects.get(user=request.user)
+    except ClientModel.DoesNotExist:
+        return JsonResponse({'error': 'Profil du client non trouvé'}, status=404)
+
+    if request.method == 'PUT':
+        data = JSONParser().parse(request)
+        # Utilisation du serializer pour la mise à jour du profil
+        serializer = ClientSerializer(client, data=data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=200)
+        return JsonResponse(serializer.errors, status=400)
+
 @api_view(['GET'])
 def get_freelancers_profiles(request):
     freelancers = FreelancerModel.objects.all()
@@ -67,3 +91,24 @@ def get_freelancer_profile_by_id(request,id):
         return Response(serializer.data)
     except FreelancerModel.DoesNotExist:
         return Response({'detail': 'Freelance non trouvé'}, status=status.HTTP_404_NOT_FOUND)
+    
+
+@csrf_exempt  # Désactive la vérification CSRF
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_freelance_profile(request):
+    try:
+        # Récupère le profil du freelance lié à l'utilisateur connecté
+        freelance = FreelancerModel.objects.get(user=request.user)
+    except FreelancerModel.DoesNotExist:
+        return JsonResponse({'error': 'Profil du freelance non trouvé'}, status=404)
+
+    if request.method == 'PUT':
+        data = JSONParser().parse(request)
+        # Utilisation du serializer pour la mise à jour du profil
+        serializer = FreelancerSerializer(freelance, data=data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=200)
+        return JsonResponse(serializer.errors, status=400)
