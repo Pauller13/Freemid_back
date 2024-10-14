@@ -1,21 +1,45 @@
 from rest_framework import serializers
-
 from .user_serializer import UserSerializer
 from ..models.client_model import ClientModel
-from ..models.user_model import UserModel
-
+import base64
+from django.core.files.base import ContentFile
 
 class ClientSerializer(serializers.ModelSerializer):
-    user = UserSerializer(write_only=True)
-    username = serializers.ReadOnlyField(source='user.username')
+    user = UserSerializer(partial=True)  # Allow partial updates
 
     class Meta:
         model = ClientModel
-        fields = ['user', 'username', 'company_description', 'project_history']
-        read_only_fields = ['username', 'verification_status']
+        fields = ['user', 'company_description', 'additional_info']
+        read_only_fields = ['verification_status']
 
-    def create(self, validated_data):
-        user_data = validated_data.pop('user')
-        user = UserModel.objects.create(**user_data)
-        client = ClientModel.objects.create(user=user, **validated_data)
-        return client
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop('user', {})
+        print(user_data)
+        user = instance.user
+
+        if 'photo' in user_data:
+            photo_data = user_data['photo']
+            if isinstance(photo_data, str) and photo_data.startswith('data:image/'):
+                format, imgstr = photo_data.split(';base64,')
+                ext = format.split('/')[-1]  # obtenir l'extension
+                instance.user.photo.save(f'profile_photo.{ext}', ContentFile(base64.b64decode(imgstr)), save=True)
+
+        # Update user fields
+        for attr, value in user_data.items():
+            setattr(user, attr, value)
+        user.save()
+
+        # Update client fields
+        instance.company_description = validated_data.get('company_description', instance.company_description)
+        instance.additional_info = validated_data.get('additional_info', instance.additional_info)
+
+        instance.save()
+        return instance
+
+    # def validate(self, data):
+    #     # Remove password and confirm_password validation for updates
+    #     if self.instance is not None:  # This is an update
+    #         user_data = data.get('user', {})
+    #         user_data.pop('password', None)
+    #         user_data.pop('confirm_password', None)
+    #     return data

@@ -7,8 +7,8 @@ from user.models.user_model import UserModel
 class ClientModel(DateTimeModel):
     user = models.OneToOneField(UserModel, on_delete=models.CASCADE, related_name='client_profile')
     company_description = models.TextField(blank=True, null=True)
-    project_history = models.JSONField(default=list, null=True)
-    verification_status = models.BooleanField(default=False)
+    additional_info = models.JSONField(default=list, null=True)
+    verification_status = models.BooleanField(default=True)
 
     def __str__(self):
         return self.user.username

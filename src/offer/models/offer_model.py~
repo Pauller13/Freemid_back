@@ -11,3 +11,4 @@ class OfferModel(DateTimeModel):
     required_skills = models.ManyToManyField('SkillModel', through='OfferSkillModel')
     budget = models.DecimalField(max_digits=10, decimal_places=2)
     deadline = models.DateTimeField()
+    # specific_requirements = models.TextField(blank=True, null=True)

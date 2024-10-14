@@ -10,7 +10,7 @@ class FreelancerModel(DateTimeModel):
     skills = models.JSONField(default=list)
     certificates = models.JSONField(default=list)
     portfolio = models.JSONField(default=list)
-    verification_status = models.BooleanField(default=True)
+    verification_status = models.BooleanField(default=False)
     rate_card = models.JSONField(default=dict)
 
     def __str__(self):
