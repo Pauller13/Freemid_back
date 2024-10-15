@@ -16,9 +16,9 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = UserModel.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
-    https_methods = ['post', 'patch']
+    https_methods = ['post']
 
-    @action(detail=False, methods=['patch'], url_path='reset-password')
+    @action(detail=False, methods=['post'], url_path='reset-password')
     def reset_password(self, request, *args, **kwargs):
         email = request.data.get('email')
 

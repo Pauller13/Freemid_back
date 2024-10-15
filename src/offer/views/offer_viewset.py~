@@ -95,7 +95,7 @@ class OfferViewSet(viewsets.ModelViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
         # Récupérer les offres qui nécessitent des compétences du freelance
         skill_offers = OfferModel.objects.filter(
-            offerskillmodel__skill__name__in=freelancer.skills
+            offerskillmodel__skill__name__in=freelancer.skills  
         ).distinct()
         # Sérialiser les résultats
         skill_offer_serializer = OfferSerializer(skill_offers, many=True)
