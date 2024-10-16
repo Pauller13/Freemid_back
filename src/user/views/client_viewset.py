@@ -61,8 +61,6 @@ class ClientViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(client)
         return Response(serializer.data)
 
-        return Response(serializer.data)
-
     @action(detail=False, methods=['patch'], url_path='update-password')
     def update_password(self, request):
         user = request.user

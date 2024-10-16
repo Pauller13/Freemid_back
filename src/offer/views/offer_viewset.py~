@@ -44,7 +44,7 @@ class OfferViewSet(viewsets.ModelViewSet):
 
             skill_names = []
             for skill_data in required_skills:
-                skill_name = skill_data.get('skill', {})
+                skill_name = skill_data.get('skill', {}).get('name', '')
 
                 try:
                     skill = SkillModel.objects.create(name=skill_name)
@@ -85,6 +85,29 @@ class OfferViewSet(viewsets.ModelViewSet):
             'client_offers': client_offer_serializer.data,
         }, status=status.HTTP_200_OK)
 
+    @action(detail=True, methods=['get'], url_path='get-offer')
+    def get-offer(self, request, *args, **kwargs):
+        # Get the offer ID from the URL parameters
+        offer_id = kwargs.get('pk')  # Assuming you're using pk in the URL
+        user = request.user
+
+        try:
+            # Get the client associated with the authenticated user
+            client = ClientModel.objects.get(user=user)
+        except ClientModel.DoesNotExist:
+            return Response({"detail": "Client not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            # Retrieve the offer ensuring it belongs to the client
+            offer = OfferModel.objects.get(id=offer_id, client=client)
+        except OfferModel.DoesNotExist:
+            return Response({"detail": "Offer not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Serialize the offer data
+        serializer = OfferSerializer(offer)
+
+        return Response(serializer.data)
+
     @action(detail=False, methods=['get'], url_path='list-offers')
     def list_offers(self, request):
         # Récupérer le client et le freelance
@@ -95,7 +118,7 @@ class OfferViewSet(viewsets.ModelViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
         # Récupérer les offres qui nécessitent des compétences du freelance
         skill_offers = OfferModel.objects.filter(
-            offerskillmodel__skill__name__in=freelancer.skills  
+            offerskillmodel__skill__name__in=freelancer.skills
         ).distinct()
         # Sérialiser les résultats
         skill_offer_serializer = OfferSerializer(skill_offers, many=True)

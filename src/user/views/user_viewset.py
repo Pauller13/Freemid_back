@@ -8,6 +8,8 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
+from user.models.client_model import ClientModel
+from user.models.freelancer_model import FreelancerModel
 from user.models.user_model import UserModel
 from user.serializers.user_serializer import UserSerializer
 
@@ -17,6 +19,25 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
     https_methods = ['post', 'patch']
+
+    def perform_create(self, serializer):
+        serializer.save()
+        if self.request.data.get('role') == 'freelancer':
+            FreelancerModel.objects.create(
+                user=serializer.instance,
+                biography='',
+                skills={},
+                certificates=[],
+                portfolio={},
+                rate_card={},
+            )
+        elif self.request.data.get('role') == 'client':
+            ClientModel.objects.create(
+                user=serializer.instance,
+                company_description='',
+                additional_info=[],
+            )
+
 
     @action(detail=False, methods=['patch'], url_path='reset-password')
     def reset_password(self, request, *args, **kwargs):

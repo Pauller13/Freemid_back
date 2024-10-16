@@ -11,7 +11,7 @@ class FreelancerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FreelancerModel
-        fields = ['id', 'user', 'biography', 'skills', 'certificates', 'portfolio',
+        fields = ['user', 'biography', 'skills', 'certificates', 'portfolio',
                   'rate_card']
         read_only_fields = ['verification_status']
 

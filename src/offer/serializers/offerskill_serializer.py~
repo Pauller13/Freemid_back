@@ -1,0 +1,10 @@
+from rest_framework import serializers
+from offer.models.offerskill_model import OfferSkillModel
+from offer.serializers.skill_serializer import SkillSerializer
+
+
+class OfferSkillSerializer(serializers.ModelSerializer):
+    name = SkillSerializer(partial=True)
+    class Meta:
+        model = OfferSkillModel
+        fields = ["name", "level_required"]

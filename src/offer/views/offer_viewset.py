@@ -44,7 +44,7 @@ class OfferViewSet(viewsets.ModelViewSet):
 
             skill_names = []
             for skill_data in required_skills:
-                skill_name = skill_data.get('skill', {})
+                skill_name = skill_data.get('skill', {}).get('name', '')
 
                 try:
                     skill = SkillModel.objects.create(name=skill_name)
@@ -84,6 +84,8 @@ class OfferViewSet(viewsets.ModelViewSet):
         return Response({
             'client_offers': client_offer_serializer.data,
         }, status=status.HTTP_200_OK)
+
+
 
     @action(detail=False, methods=['get'], url_path='list-offers')
     def list_offers(self, request):

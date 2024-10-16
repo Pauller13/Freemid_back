@@ -4,7 +4,7 @@ from user.serializers.freelancer_serialiser import FreelancerSerializer
 
 
 class ProposalSerializer(serializers.ModelSerializer):
-    freelancer = FreelancerSerializer(partial=True)
+    freelancer_info = FreelancerSerializer(read_only=True, many=True)
     class Meta:
         model = ProposalModel
-        fields = ["offer", "freelancer", "proposed_budget", "proposed_deadline", "message"]
+        fields = ["offer", "freelancer", "proposed_budget", "proposed_deadline", "message", "freelancer_info"]
