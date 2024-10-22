@@ -15,7 +15,7 @@ class OfferSerializer(serializers.ModelSerializer):
             "client",
             "title",
             "description",
-            "required_skills",
+            "required_skills",  
             "budget",
             "deadline",
             "required_skills_name"
