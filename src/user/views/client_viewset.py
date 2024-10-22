@@ -50,13 +50,7 @@ class ClientViewSet(viewsets.ModelViewSet):
         if request.user.role != 'client':
             raise PermissionDenied(detail="Vous n'avez pas l'autorisation d'accéder au profil client.")
 
-        client, created = ClientModel.objects.get_or_create(user=request.user)
-
-        # Optionally initialize default fields for new clients
-        if created:
-            client.company_description = ''
-            client.additional_info = []
-            client.save()
+        client = ClientModel.objects.get(user=request.user)
 
         serializer = self.get_serializer(client)
         return Response(serializer.data)
