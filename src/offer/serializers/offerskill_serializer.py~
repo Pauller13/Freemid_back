@@ -4,7 +4,8 @@ from offer.serializers.skill_serializer import SkillSerializer
 
 
 class OfferSkillSerializer(serializers.ModelSerializer):
-    name = SkillSerializer(partial=True)
+
     class Meta:
         model = OfferSkillModel
-        fields = ["name", "level_required"]
+        fields = ["skill", "level_required"]
+

@@ -1,12 +1,12 @@
 from rest_framework import serializers
 from offer.models.offer_model import OfferModel
+from offer.models.skill_model import SkillModel
 from offer.serializers.offerskill_serializer import OfferSkillSerializer
-
 from offer.models.offerskill_model import OfferSkillModel
 
 
 class OfferSerializer(serializers.ModelSerializer):
-    required_skills_name = serializers.SerializerMethodField()
+    required_skills = OfferSkillSerializer(many=True, source="offerskillmodel_set", required=False)
 
     class Meta:
         model = OfferModel
@@ -18,10 +18,37 @@ class OfferSerializer(serializers.ModelSerializer):
             "required_skills",
             "budget",
             "deadline",
-            "required_skills_name"
         ]
 
-    def get_required_skills_name(self, obj):
-        # Récupérer tous les skills liés à l'offre via OfferSkillModel
-        skills = OfferSkillModel.objects.filter(offer=obj)
-        return [skill.skill.name for skill in skills]  # Retourner une liste des noms de compétences
+    def create(self, validated_data):
+        required_skills_data = validated_data.pop('required_skills', [])
+        offer = OfferModel.objects.create(**validated_data)
+
+        for skill_data in required_skills_data:
+            skill_name = skill_data['skill']['name']
+            skill, _ = SkillModel.objects.get_or_create(name=skill_name)
+            OfferSkillModel.objects.create(
+                offer=offer,
+                skill=skill,
+                level_required=skill_data['level_required']
+            )
+
+        return offer
+
+
+    def update(self, instance, validated_data):
+        required_skills_data = validated_data.pop('required_skills', [])
+        instance = super().update(instance, validated_data)
+
+        # Clear old skills and add new ones
+        instance.required_skills.clear()
+        for skill_data in required_skills_data:
+            skill_name = skill_data['skill']['name']
+            skill, _ = SkillModel.objects.get_or_create(name=skill_name)
+            OfferSkillModel.objects.create(
+                offer=instance,
+                skill=skill,
+                level_required=skill_data['level_required']
+            )
+
+        return instance

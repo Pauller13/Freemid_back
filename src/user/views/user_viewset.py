@@ -26,9 +26,9 @@ class UserViewSet(viewsets.ModelViewSet):
             FreelancerModel.objects.create(
                 user=serializer.instance,
                 biography='',
-                skills={},
+                skills=[],
                 certificates=[],
-                portfolio={},
+                portfolio=[],
                 rate_card={},
             )
         elif self.request.data.get('role') == 'client':

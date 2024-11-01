@@ -24,12 +24,18 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer.save()
         if self.request.data.get('role') == 'freelancer':
             FreelancerModel.objects.create(
-                user=serializer.instance
+                user=serializer.instance,
+                biography='',
+                skills=[],
+                certificates=[],
+                portfolio={},
+                rate_card={},
             )
         elif self.request.data.get('role') == 'client':
             ClientModel.objects.create(
-                user=serializer.instance
-
+                user=serializer.instance,
+                company_description='',
+                additional_info=[],
             )
 
 

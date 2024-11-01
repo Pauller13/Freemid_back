@@ -12,22 +12,23 @@ class ProposalViewSet(viewsets.ModelViewSet):
     queryset = ProposalModel.objects.all()
     serializer_class = ProposalSerializer
 
-    def list(self, request, *args, **kwargs):
-        # Récupérer toutes les propositions reçues pour les offres du client
-        user = request.user
-
-        try:
-            # Get the client associated with the authenticated user
-            freelancer = FreelancerModel.objects.get(user=user)
-        except FreelancerModel.DoesNotExist:
-            return Response({"detail": "Freelancer not found."}, status=status.HTTP_404_NOT_FOUND)
-
-        proposals = ProposalModel.objects.filter(freelancer=freelancer)
-
-        serializer = ProposalSerializer(proposals, many=True)
-        print(serializer.data)
-
-        return Response(serializer.data)
+    # def list(self, request, *args, **kwargs):
+    #     # Récupérer toutes les propositions reçues pour les offres du client
+    #     user = request.user
+    #
+    #     try:
+    #         # Get the client associated with the authenticated user
+    #         client = ClientModel.objects.get(user=user)
+    #     except ClientModel.DoesNotExist:
+    #         return Response({"detail": "Client not found."}, status=status.HTTP_404_NOT_FOUND)
+    #
+    #     print("Client:", client)
+    #     proposals = ProposalModel.objects.filter(offer__client=client)
+    #
+    #     serializer = ProposalSerializer(proposals, many=True)
+    #     print(serializer.data)
+    #
+    #     return Response(serializer.data)
 
     @action(detail=True, methods=['get'], url_path='get-proposals')
     def get(self, request, *args, **kwargs):
