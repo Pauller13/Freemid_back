@@ -4,30 +4,29 @@ from ..models.client_model import ClientModel
 import base64
 from django.core.files.base import ContentFile
 
+
 class ClientSerializer(serializers.ModelSerializer):
     user = UserSerializer(partial=True)  # Allow partial updates
 
     class Meta:
         model = ClientModel
-        fields = ['id','user', 'company_description', 'additional_info']
+        fields = ['id', 'user', 'company_description', 'additional_info']
         read_only_fields = ['verification_status']
 
     def update(self, instance, validated_data):
         user_data = validated_data.pop('user', {})
-        print(user_data)
         user = instance.user
-
         if 'photo' in user_data:
             if user_data['photo'] is not None:
                 photo_data = user_data['photo']
                 if isinstance(photo_data, str) and photo_data.startswith('data:image/'):
                     format, imgstr = photo_data.split(';base64,')
-                    ext = format.split('/')[-1]  # obtenir l'extension
+                    ext = format.split('/')[-1]
                     instance.user.photo.save(f'profile_photo.{ext}', ContentFile(base64.b64decode(imgstr)), save=True)
 
-        # Update user fields
         for attr, value in user_data.items():
-            setattr(user, attr, value)
+            if attr != 'photo':
+                setattr(user, attr, value)
         user.save()
 
         # Update client fields

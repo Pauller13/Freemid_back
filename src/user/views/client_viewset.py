@@ -27,21 +27,20 @@ class ClientViewSet(viewsets.ModelViewSet):
         # Récupérer le client associé à l'utilisateur connecté
         client = ClientModel.objects.get(user=request.user)
         user_data = request.data.get('user', {})
-        print(user_data, '2')
-
-        # Ne pas valider le username si aucun changement
         if 'username' in user_data:
             if user_data['username'] == client.user.username:
-                user_data.pop('username')  # Supprimer le username pour éviter l'erreur
-        if 'photo' in user_data:
-            user_data['photo'] = user_data['photo']
+                user_data.pop('username')
+        data_to_validate = request.data.copy()
+        data_to_validate['user'] = user_data
+        print(data_to_validate)
+        serializer = self.get_serializer(client, data=data_to_validate, partial=True)
+        if serializer.is_valid():
+            print('ok')
+            self.perform_update(serializer)
 
-        serializer = self.get_serializer(client, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-        return Response(serializer.data)
-
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     @action(detail=False, methods=['get'], url_path='my-profile')
     def retrieve_client_profile(self, request):
         if not request.user.is_authenticated:
